@@ -2,6 +2,7 @@ package com.company;
 
 import java.io.*;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 
 public class lexer {
@@ -12,19 +13,25 @@ public class lexer {
         fr = new FileReader(file);
         reader = new BufferedReader(fr);
 
-        HashSet<Integer> white = new HashSet<>();
-        HashSet<Integer> az = new HashSet<>();
-        HashSet<Integer> az09 = new HashSet<>();
-        HashSet<Integer> az09_ = new HashSet<>();
-        HashSet<String> operator = new HashSet<>();
-        HashSet<String> reserved = new HashSet<>();
+        //white = new HashSet<>();
+        az = new HashSet<>();
+        az09 = new HashSet<>();
+        az09_ = new HashSet<>();
+        //numbers = new HashSet<>();
+        operator = new LinkedHashSet<>();
+        reserved = new HashSet<>();
+        delim = new HashSet<>();
 
+        /*
         white.add(011);
         white.add(012);
         white.add(013);
         white.add(014);
         white.add(015);
         white.add(040);
+*/
+        delim.add(";");
+        delim.add(",");
 
         for(int i = 'a'; i <= 'z'; i++){
             az.add(i);
@@ -34,6 +41,7 @@ public class lexer {
         for(int i = '0'; i <= '9'; i++){
             az09.add(i);
             az09_.add(i);
+            //numbers.add(i);
         }
         az09_.add((int)'_');
 
@@ -71,7 +79,7 @@ public class lexer {
 
     private void do_step(char c){
         if(state == 0){
-            if(white.contains(c))
+          //  if(white.contains(c))
 
         }
         if(state == 1){
@@ -90,9 +98,9 @@ public class lexer {
             c = fr.read();
         }
         len = text.length();
-        token = new int[len];
+        token = new color[len];
         for(int i = 0; i < len; i++)
-            token[i] = 0;
+            token[i] = color.clear;
 
         int i = 0;
         while(i < len){
@@ -102,7 +110,7 @@ public class lexer {
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
-                    token[j] = 1;
+                    token[j] = color.comment;
                 text_draft = to_white(text_draft, pos1, pos2);
                 i = pos2;
             } else
@@ -117,7 +125,7 @@ public class lexer {
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
-                    token[j] = 1;
+                    token[j] = color.comment;
                 text_draft = to_white(text_draft, pos1, pos2);
                 i = pos2;
             } else
@@ -132,7 +140,7 @@ public class lexer {
                 if(pos_before == -1 || is_blank_string(text_draft.substring(pos_before, pos1))){
                     int pos2 = text_draft.indexOf("\n");
                     for(int j = pos1; j < pos2; j++)
-                        token[j] = 2;
+                        token[j] = color.directive;
                     text_draft = to_white(text_draft, pos1, pos2);
                     i = pos2;
                 } else
@@ -170,24 +178,80 @@ public class lexer {
                         j = len;
                 }
                 if(j < len && pos2 != -1){
-                    set_state(text_draft, pos1, pos2, 3);
+                    if(ch == '"')
+                        text_draft = set_state(text_draft, pos1, pos2 + 1, color.string);
+                    else
+                        text_draft = set_state(text_draft, pos1, pos2 + 1, color.charline);
+                    i = pos2 + 1;
                 }
             }
-
         }
 
+        for(String word : operator){
+            i = 0;
+            while(i < len){
+                int pos1 = text_draft.indexOf(word, i);
+                if(pos1 != -1){
+                    text_draft = set_state(text_draft, pos1, pos1 + word.length(), color.operator);
+                    i = pos1 + word.length();
+                } else
+                    i = len;
+            }
+        }
+
+        for(String word : delim){
+            i = 0;
+            while(i < len){
+                int pos1 = text_draft.indexOf(word, i);
+                if(pos1 != -1){
+                    text_draft = set_state(text_draft, pos1, pos1 + word.length(), color.delim);
+                    i = pos1 + word.length();
+                } else
+                    i = len;
+            }
+        }
+
+        for(String word : reserved){
+            i = 0;
+            while(i < len){
+                int pos1 = text_draft.indexOf(word, i);
+                if(pos1 != -1){
+                    text_draft = set_state(text_draft, pos1, pos1 + word.length(), color.reserved);
+                    i = pos1 + word.length();
+                } else
+                    i = len;
+            }
+        }
+
+        i = 0;
+        while(i < len){
+            if(token[i] == color.clear && numbers.indexOf(text_draft.charAt(i)) != -1){
+                int pos1 = i;
+                if(pos1 != 0 && (text.charAt(pos1 -1) == '-'))
+                    pos1--;
+                int pos2 = text_draft.indexOf(white, i);
+                if(pos2 != -1 && text_draft.charAt(pos2 - 1) == 'e')
+                    pos2 = text_draft.indexOf(white, pos2);
+                if(pos2 == -1)
+                    pos2 = len;
+                text_draft = set_state(text_draft, pos1, pos2, color.num);
+
+
+
+            }
+        }
 
 
 
     }
 
-    private String set_state(String str, int pos1, int pos2, int st){
+    private String set_state(String str, int pos1, int pos2, color st){
         if(pos1 >= pos2)
             return str;
         if(pos2 > str.length())
             pos2 = str.length();
         for(int j = pos1; j < pos2; j++)
-            token[j] = 2;
+            token[j] = st;
         str = to_white(str, pos1, pos2);
         return str;
     }
@@ -308,23 +372,35 @@ public class lexer {
     ArrayList<ArrayList<String>> out_str;
     ArrayList<ArrayList<token>> color;
     */
-    /*
-    enum token {
-        clear,
-        directive,
-        error
-    }*/
 
-    HashSet<Integer> white;
+    enum color {
+        clear,
+        white,
+        comment,
+        directive,
+        string,
+        charline,
+        operator,
+        delim,
+        reserved,
+        num,
+        error
+    }
+
+    //HashSet<Integer> white;
+    String white = "\011\012\013\014\015\040";
     HashSet<Integer> az;
     HashSet<Integer> az09;
     HashSet<Integer> az09_;
-    HashSet<String> operator;
+    //HashSet<Integer> numbers;
+    String numbers = "0123456789";
+    LinkedHashSet<String> operator;
     HashSet<String> reserved;
+    HashSet<String> delim;
 
     String text = "";
     String text_draft = "";
-    int[] token;
+    color[] token;
     int len;
 
 
