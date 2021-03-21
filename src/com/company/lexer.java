@@ -16,9 +16,9 @@ public class lexer {
         reader = new BufferedReader(fr);
 
         //white = new HashSet<>();
-        az = new HashSet<>();
-        az09 = new HashSet<>();
-        az09_ = new HashSet<>();
+        //az = new HashSet<>();
+        //az09 = new HashSet<>();
+        //az09_ = new HashSet<>();
         //numbers = new HashSet<>();
         operator = new LinkedHashSet<>();
         reserved = new HashSet<>();
@@ -34,18 +34,22 @@ public class lexer {
 */
         delim.add(";");
         delim.add(",");
+        delim.add("{");
+        delim.add("}");
 
         for(int i = 'a'; i <= 'z'; i++){
-            az.add(i);
-            az09.add(i);
-            az09_.add(i);
+            az += (char)i;
+            az09 += (char)i;
+            az09_ += (char)i;
         }
         for(int i = '0'; i <= '9'; i++){
-            az09.add(i);
-            az09_.add(i);
+            az09 += (char)i;
+            az09_ += (char)i;
+            numeric += (char)i;
             //numbers.add(i);
         }
-        az09_.add((int)'_');
+        az09_ += "_";
+        numeric += "-";
 
         File file1 = new File("operators.txt");
         FileReader fr1 = new FileReader(file1);
@@ -127,7 +131,7 @@ public class lexer {
         while(i < len){
             int pos1 = text_draft.indexOf("/*", i);
             if(pos1 != -1){
-                int pos2 = text_draft.indexOf("*/", pos1);
+                int pos2 = text_draft.indexOf("*/", pos1) + 2;
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
@@ -139,14 +143,16 @@ public class lexer {
         }
 
         System.out.println("point 2");
-/*
+
         i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("#", i);
             if(pos1 != -1){
                 int pos_before = text_draft.substring(0, pos1).lastIndexOf("\n");
                 if(pos_before == -1 || is_blank_string(text_draft.substring(pos_before, pos1))){
-                    int pos2 = text_draft.indexOf("\n");
+                    int pos2 = text_draft.indexOf("\n", pos1);
+                    if(pos2 == -1)
+                        pos2 = len;
                     for(int j = pos1; j < pos2; j++)
                         token[j] = directive;
                     text_draft = to_white(text_draft, pos1, pos2);
@@ -174,7 +180,7 @@ public class lexer {
                 else
                     pos1 = tmp2;
                 char ch = text_draft.charAt(pos1);
-                int j = pos1;
+                int j = pos1 + 1;
                 boolean not_ok = true;
                 int pos2 = -1;
                 while(j < len && not_ok){
@@ -232,7 +238,14 @@ public class lexer {
             while(i < len){
                 int pos1 = text_draft.indexOf(word, i);
                 if(pos1 != -1){
-                    text_draft = set_state(text_draft, pos1, pos1 + word.length(), color.reserved);
+                    int tmp1 = pos1 - 1, tmp2 = pos1 + word.length() + 1;
+                    if(pos1 == 0)
+                        tmp1++;
+                    if(tmp2 == len)
+                        tmp2--;
+                    String tmp = text_draft.substring(tmp1, tmp2).trim();
+                    if(tmp.equals(word))
+                        text_draft = set_state(text_draft, pos1, pos1 + word.length(), color.reserved);
                     i = pos1 + word.length();
                 } else
                     i = len;
@@ -241,6 +254,60 @@ public class lexer {
 
         System.out.println("point 7");
 
+
+
+        i = 0;
+        while(i < len){
+            if(az.indexOf(text_draft.charAt(i)) != -1 && token[i] == color.clear){
+                if(i == 0 || white.indexOf(String.valueOf((char)text_draft.charAt(i - 1))) != -1){
+                    int j = i + 1;
+                    while(j < len && token[i] == color.clear && az09_.indexOf(text_draft.charAt(j)) != -1)
+                        j++;
+                    int pos2 = j;
+                    if(j == len)
+                        pos2 = len;
+                    text_draft = set_state(text_draft, i, pos2, color.ident);
+                    i = pos2;
+                } else
+                    i++;
+            } else
+                i++;
+        }
+
+        i = 0;
+        while(i < len){
+            if(numeric.indexOf(text_draft.charAt(i)) != -1 && token[i] == color.clear){
+                if(i == 0 || white.indexOf(String.valueOf((char)text_draft.charAt(i - 1))) != -1){
+                    int j = i + 1;
+                    while(j < len && token[i] == color.clear && white.indexOf(text_draft.charAt(j)) == -1)
+                        j++;
+                    int pos2 = j;
+                    if(j == len)
+                        pos2 = len;
+                    if(is_norm_num(text_draft.substring(i, pos2))){
+
+                    }
+
+
+                    text_draft = set_state(text_draft, i, pos2, color.num);
+                    i = pos2;
+                } else
+                    i++;
+            } else
+                i++;
+        }
+
+        for(i = 0; i < len; i++){
+            if(token[i] == clear && white.indexOf(text_draft.charAt(i)) != -1)
+                token[i] = color.white;
+        }
+        for(i = 0; i < len; i++){
+            if(token[i] == clear)
+                token[i] = color.error;
+        }
+
+
+        /*
         i = 0;
         while(i < len){
             if(token[i] == clear && numbers.indexOf(text_draft.charAt(i)) != -1){
@@ -253,12 +320,9 @@ public class lexer {
                 if(pos2 == -1)
                     pos2 = len;
                 text_draft = set_state(text_draft, pos1, pos2, num);
-
-
-
             }
         }
-*/
+        */
         System.out.println("point 8");
 
 
@@ -320,7 +384,27 @@ public class lexer {
  */
 
 
+    private boolean is_norm_num(String st){
+        return true;
+        /*
+        String str = st;
+        int n = str.length();
+        if(str.equals("-"))
+            return false;
+        if(str.charAt(0) == '-')
+            st = st.substring(1);
+        if(n == 1 && str.charAt(0) >= '0' && str.charAt(0) <= '9')
+            return true;
+        if(str.charAt(0) < 0 || str.charAt(0) > 9)
+            return false;
+        if(str.charAt(0) != 0){
+            int dot_counter = 0;
+            int i = 0;
+            while(i < n){
 
+            }
+        }*/
+    }
 
     private boolean is_directive_line(String line) throws IOException {
         int first_hashtag = line.indexOf("#");
@@ -379,13 +463,18 @@ public class lexer {
         writer.write(filename);
         writer.write("</title>\n" +
                 "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
-                "<link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap\" rel=\"stylesheet\">\n" +
+                "<link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap\" rel=\"stylesheet\">\n" +
                 "    <style>\n" +
                 "   body {\n" +
                 "    font-family: \"Source Code Pro\", monospace;\n" +
+                "    white-space: pre;\n" +
+                "    font-weight: 500\n" +
+                "   }\n" +
+                "   p {\n" +
+                "    margin : 0\n" +
                 "   }\n" +
                 "   .clear {\n" +
-                "    background-color: #fff;\n" +
+                "    background-color: #dff;\n" +
                 "    color: #500;\n" +
                 "   }\n" +
                 "   .white {\n" +
@@ -393,40 +482,44 @@ public class lexer {
                 "    color: #050;\n" +
                 "   }\n" +
                 "   .comment {\n" +
-                "    background-color: #fef;\n" +
-                "    color: #0c0;\n" +
+                "    background-color: #efe;\n" +
+                "    color: #999;\n" +
                 "   }\n" +
                 "   .directive {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #a00;\n" +
+                "    background-color: #fee;\n" +
+                "    color: #c00;\n" +
                 "   }\n" +
                 "   .string {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #0a0;\n" +
+                "    background-color: #eef;\n" +
+                "    color: #00f;\n" +
                 "   }\n" +
                 "   .charline {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #00a;\n" +
+                "    background-color: #eef;\n" +
+                "    color: #00f;\n" +
                 "   }\n" +
                 "   .operator {\n" +
                 "    background-color: #fff;\n" +
-                "    color: #550;\n" +
+                "    color: #f30;\n" +
                 "   }\n" +
                 "   .delim {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #505;\n" +
+                "    background-color: #fff0f0;\n" +
+                "    color: #f00;\n" +
                 "   }\n" +
                 "   .reserved {\n" +
                 "    background-color: #fff;\n" +
-                "    color: #055;\n" +
+                "    color: #0000a0;\n" +
                 "   }\n" +
                 "   .num {\n" +
                 "    background-color: #fff;\n" +
-                "    color: #aa0;\n" +
+                "    color: #ff52f9;\n" +
+                "   }\n" +
+                "   .ident {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #00a000;\n" +
                 "   }\n" +
                 "   .error {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #a0a;\n" +
+                "    background-color: #f00;\n" +
+                "    color: #fff;\n" +
                 "   }\n" +
                 "  </style>\n" +
                 "</head>\n" +
@@ -436,14 +529,21 @@ public class lexer {
         int i = 0;
         while(i < len){
             int pos1 = i;
-            int pos2 = text.indexOf("\n", pos1 + 1);
+            int pos2 = text.indexOf("\r", pos1 + 1);
             if(pos2 == -1)
                 pos2 = len;
             color etalon = token[pos1];
             String tmp = String.valueOf(text.charAt(pos1));
             for(int j = pos1 + 1; j < pos2; j++){
                 if(token[j] == etalon)
-                    tmp += text.charAt(j);
+                    if(text.charAt(j) == '<')
+                        tmp += "&lt";
+                    else{
+                        if(text.charAt(j) == '>')
+                            tmp += "&gt";
+                        else
+                            tmp += text.charAt(j);
+                    }
                 else {
                     writer.write("<span class = \""+get_html_class(etalon)+"\">" +
                             tmp + "</span>");
@@ -453,8 +553,8 @@ public class lexer {
             }
             writer.write("<span class = \""+get_html_class(etalon)+"\">" +
                     tmp + "</span>");
-            writer.write("<br>\n");
-            i = pos2;
+            //  writer.write("<br>\n");
+            i = pos2 + 1;
         }
 
 /*
@@ -482,6 +582,7 @@ public class lexer {
             case delim: return "delim";
             case reserved: return "reserved";
             case num: return "num";
+            case ident: return "ident";
             case error: return "error";
 
             default:
@@ -528,14 +629,19 @@ public class lexer {
         delim,
         reserved,
         num,
+        ident,
         error
     }
 
     //HashSet<Integer> white;
     String white = "\011\012\013\014\015\040";
-    HashSet<Integer> az;
-    HashSet<Integer> az09;
-    HashSet<Integer> az09_;
+    //HashSet<Integer> az;
+    //HashSet<Integer> az09;
+    //HashSet<Integer> az09_;
+    String az = "";
+    String az09 = "";
+    String az09_ = "";
+    String numeric = "";
     //HashSet<Integer> numbers;
     String numbers = "0123456789";
     LinkedHashSet<String> operator;

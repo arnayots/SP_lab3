@@ -4,13 +4,18 @@
     <meta charset="utf-8">
     <title>index2.html</title>
 <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
     <style>
    body {
     font-family: "Source Code Pro", monospace;
+    white-space: pre;
+    font-weight: 500
+   }
+   p {
+    margin : 0
    }
    .clear {
-    background-color: #fff;
+    background-color: #dff;
     color: #500;
    }
    .white {
@@ -18,202 +23,358 @@
     color: #050;
    }
    .comment {
-    background-color: #fef;
-    color: #0c0;
+    background-color: #efe;
+    color: #999;
    }
    .directive {
-    background-color: #fff;
-    color: #a00;
+    background-color: #fee;
+    color: #c00;
    }
    .string {
-    background-color: #fff;
-    color: #0a0;
+    background-color: #eef;
+    color: #00f;
    }
    .charline {
-    background-color: #fff;
-    color: #00a;
+    background-color: #eef;
+    color: #00f;
    }
    .operator {
     background-color: #fff;
-    color: #550;
+    color: #f30;
    }
    .delim {
-    background-color: #fff;
-    color: #505;
+    background-color: #fff0f0;
+    color: #f00;
    }
    .reserved {
     background-color: #fff;
-    color: #055;
+    color: #0000a0;
    }
    .num {
     background-color: #fff;
-    color: #aa0;
+    color: #ff52f9;
+   }
+   .ident {
+    background-color: #fff;
+    color: #00a000;
    }
    .error {
-    background-color: #fff;
-    color: #a0a;
+    background-color: #f00;
+    color: #fff;
    }
   </style>
 </head>
 <body>
-<p><span class = "comment">//Stoian Arsen, group K-10</span><br>
-<span class = "clear">
-</span><span class = "comment">//watch "lexer.h" & "testLexer.h" for declaration documentation</span><br>
-<span class = "clear">
-#include "lexer.h"</span><br>
-<span class = "clear">
-using std::string;</span><br>
-<span class = "clear">
-const string Lexer::delim = "#<%";</span><br>
-<span class = "clear">
-const string white_line = "\011\012\013\014\015\040";</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-string clearWhites(const string &s);</span><br>
-<span class = "clear">
-</span><span class = "comment">//clear white chars from the start and end of line</span><br>
-<span class = "clear">
-</span><span class = "comment">//middle whites do not changes</span><br>
-<span class = "clear">
-</span><span class = "comment">//can throw exceptions standard for std::string(bad_alloc)</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-LineType Lexer::load(const string& source){</span><br>
-<span class = "clear">
-    s = source;</span><br>
-<span class = "clear">
-    pos = 0;</span><br>
-<span class = "clear">
-    eof_ = false;</span><br>
-<span class = "clear">
-    if(s.empty()){</span><br>
-<span class = "clear">
-        type = LineType::Empty;</span><br>
-<span class = "clear">
-        pos = string::npos;}</span><br>
-<span class = "clear">
-    else{</span><br>
-<span class = "clear">
-        pos = 0;</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-        size_t i = s.find_first_of(delim, pos);</span><span class = "comment">//there possible that i == npos</span><br>
-<span class = "clear">
-        string tmp = clearWhites(s.substr(pos, i - pos));</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-        if(tmp == "")</span><br>
-<span class = "clear">
-            type = LineType::Empty;</span><br>
-<span class = "clear">
-        else{</span><br>
-<span class = "clear">
-            if(tmp == "footer")</span><br>
-<span class = "clear">
-                type = LineType::Footer;</span><br>
-<span class = "clear">
-            else{</span><br>
-<span class = "clear">
-                if(tmp == "header")</span><br>
-<span class = "clear">
-                    type = LineType::Header;</span><br>
-<span class = "clear">
-                else type = LineType::Line;</span><br>
-<span class = "clear">
-            }</span><br>
-<span class = "clear">
-        }</span><br>
-<span class = "clear">
-        if(type == LineType::Footer || type == LineType::Header){</span><br>
-<span class = "clear">
-        if(i == s.size() || i == string::npos){</span><br>
-<span class = "clear">
-            s = "";</span><br>
-<span class = "clear">
-            eof_ = true;</span><br>
-<span class = "clear">
-        }</span><br>
-<span class = "clear">
-        else</span><br>
-<span class = "clear">
-            pos = i + 1;</span><br>
-<span class = "clear">
-        }</span><br>
-<span class = "clear">
-    }</span><br>
-<span class = "clear">
-    return type;</span><br>
-<span class = "clear">
-}</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-bool Lexer::next(string &res){</span><br>
-<span class = "clear">
-    if(eof_)</span><br>
-<span class = "clear">
-        return false;</span><br>
-<span class = "clear">
-    if(s.empty()){</span><br>
-<span class = "clear">
-        res = "";</span><br>
-<span class = "clear">
-    eof_ = true;</span><br>
-<span class = "clear">
-        return true;}</span><br>
-<span class = "clear">
-    size_t i = s.find_first_of(delim, pos);</span><br>
-<span class = "clear">
-    res = clearWhites(s.substr(pos, i - pos));</span><br>
-<span class = "clear">
-    if(i != string::npos)</span><br>
-<span class = "clear">
-    {</span><br>
-<span class = "clear">
-        ++i;</span><br>
-<span class = "clear">
-        pos = i;</span><br>
-<span class = "clear">
-        return true;</span><br>
-<span class = "clear">
-    }</span><br>
-<span class = "clear">
-    else</span><br>
-<span class = "clear">
-        eof_ = true;</span><br>
-<span class = "clear">
-    return true;</span><br>
-<span class = "clear">
-}</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-bool Lexer::eof()const noexcept{ return eof_; }</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-string clearWhites(const string &s){</span><br>
-<span class = "clear">
-    size_t first = s.find_first_not_of(white_line);</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-    if(first == string::npos) return "";</span><br>
-<span class = "clear">
-    size_t last = s.find_last_not_of(white_line, s.size() );</span><br>
-<span class = "clear">
-    return s.substr(first, last - first + 1);</span><br>
-<span class = "clear">
-}</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-</span><br>
-<span class = "clear">
-</span><br>
-</p></body>
+<p><span class = "comment">// Made by Stoian Arsen(K-20) and Stoian Oleksandr(K-20)</span><span class = "white">
+</span><span class = "comment">// 9 Oct 2019</span><span class = "white">
+</span><span class = "white">
+</span><span class = "directive">#include &ltiostream&gt</span><span class = "white">
+</span><span class = "directive">#include &ltcmath&gt</span><span class = "white">
+</span><span class = "directive">#include &ltiomanip&gt      // std::setprecision</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//Uncomment next line to watch debug information.</span><span class = "white">
+</span><span class = "comment">//#define DEBUG</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">using</span><span class = "white"> </span><span class = "reserved">namespace</span><span class = "white"> </span><span class = "ident">std</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+</span><span class = "directive">#ifndef DEBUG</span><span class = "white">
+    </span><span class = "comment">//Number of members in a Taylor series for each function.</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_exp</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">1</span><span class = "delim">;</span><span class = "white">    </span><span class = "comment">//Increase parameters to improve accuracy.</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_log</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">5</span><span class = "delim">;</span><span class = "white">    </span><span class = "comment">//Decrease if program can`t be compiled.</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_sin</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">3</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_cos</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">3</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">1000</span><span class = "delim">;</span><span class = "white"> </span><span class = "comment">//Increase this parameter to get more numbers after the coma.</span><span class = "white">
+</span><span class = "directive">#endif // DEBUG</span><span class = "white">
+</span><span class = "directive">#ifdef DEBUG</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_exp</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">15</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_log</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">15</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_sin</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">3</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">iter_cos</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">3</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">100000</span><span class = "delim">;</span><span class = "white">
+</span><span class = "directive">#endif // DEBUG</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//========================================README========================================</span><span class = "white">
+</span><span class = "comment">/*</span><span class = "comment">
+This templates can`t get numbers with type float or double, so</span><span class = "comment">
+the program accepts only rational numbers of the form n / m.</span><span class = "comment">
+For this reason, field "res" in template classes "Exp_elem,</span><span class = "comment">
+Ln_elem, Cos_elem, Sin_elem" contains result multiplied by</span><span class = "comment">
+"static const long long accuracy". Convert it to float and</span><span class = "comment">
+divide by "static const long long accuracy" to get result.</span><span class = "comment">
+</span><span class = "comment">
+Do not enter large numbers in absolute numbers. It could call</span><span class = "comment">
+type overflow. Don`t define "iter_exp, iter_log, iter_sin,</span><span class = "comment">
+iter_cos, accuracy" large numbers. It could call stack</span><span class = "comment">
+overflow.</span><span class = "comment">
+</span><span class = "comment">
+Uncomment line with #define DEBUG to see debug information.</span><span class = "comment">
+Task: http://om.univ.kiev.ua/users_upload/15/upload/file/metaprogramming2019.pdf</span><span class = "comment">
+</span><span class = "comment">
+If you have any problems, please send email: ar.stoyan@gmail.com</span><span class = "comment">
+*/</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "comment">//                                       EXP</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Exp_elem</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Exp_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "operator">(</span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">)</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Exp_elem</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">1</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">+</span><span class = "white"> </span><span class = "ident">Exp_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Exp_elem</span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "comment">//Composition of Exp</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_exp</span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "operator"><</span><span class = "ident">iter_exp</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">Casc_exp</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_exp</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "operator"><</span><span class = "ident">iter_exp</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "comment">//                                       EXP</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Ln_elem</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Ln_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "white"> </span><span class = "operator">-</span><span class = "num">1</span><span class = "white"> </span><span class = "operator">)</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">k</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Ln_elem</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">+</span><span class = "white"> </span><span class = "ident">Ln_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Ln_elem</span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "comment">//Composition of Ln</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_ln</span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "operator"><</span><span class = "ident">iter_log</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">Casc_ln</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_ln</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "operator"><</span><span class = "ident">iter_log</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "comment">//                                       EXP</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Cos_elem</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Cos_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "white"> </span><span class = "operator">-</span><span class = "num">1</span><span class = "white"> </span><span class = "operator">)</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "operator">(</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "num">2</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "num">2</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">))</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Cos_elem</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">+</span><span class = "white"> </span><span class = "ident">Cos_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Cos_elem</span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "comment">//Composition of Cos</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_cos</span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "operator"><</span><span class = "ident">iter_cos</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">Casc_cos</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_cos</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "operator"><</span><span class = "ident">iter_cos</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "comment">//                                       EXP</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Sin_elem</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Sin_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "white"> </span><span class = "operator">-</span><span class = "num">1</span><span class = "white"> </span><span class = "operator">)</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "operator">(</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "num">2</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "operator">(</span><span class = "num">2</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">+</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">))</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Sin_elem</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">*</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">m</span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">+</span><span class = "white"> </span><span class = "ident">Sin_elem</span><span class = "operator"><</span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "reserved">long</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+</span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+    </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Sin_elem</span><span class = "operator"><</span><span class = "num">0</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "comment">//Composition of Sin</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">k</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_sin</span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "operator"><</span><span class = "ident">iter_sin</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">Casc_sin</span><span class = "operator"><</span><span class = "ident">k</span><span class = "white"> </span><span class = "operator">-</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">template</span><span class = "white"> </span><span class = "operator"><</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "reserved">class</span><span class = "white"> </span><span class = "ident">Casc_sin</span><span class = "white"> </span><span class = "operator"><</span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">></span><span class = "white">
+    </span><span class = "delim">{</span><span class = "white">
+    </span><span class = "reserved">public</span><span class = "operator">:</span><span class = "white">
+        </span><span class = "reserved">enum</span><span class = "white"> </span><span class = "delim">{</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "operator"><</span><span class = "ident">iter_sin</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "delim">};</span><span class = "white">
+    </span><span class = "delim">};</span><span class = "white">
+</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "comment">//                                       MAIN</span><span class = "white">
+</span><span class = "comment">//======================================================================================</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">NS</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">4</span><span class = "delim">;</span><span class = "comment">//number of compositions in Sin</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">NC</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">3</span><span class = "delim">;</span><span class = "comment">//number of compositions in Sin</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">NL</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">2</span><span class = "delim">;</span><span class = "comment">//number of compositions in Sin</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">NE</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">2</span><span class = "delim">;</span><span class = "comment">//number of compositions in Sin</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">1</span><span class = "delim">;</span><span class = "comment">//input data</span><span class = "white">
+</span><span class = "reserved">static</span><span class = "white"> </span><span class = "reserved">const</span><span class = "white"> </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">m</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "num">2</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">main</span><span class = "operator">()</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">
+    </span><span class = "directive">#ifdef DEBUG</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">setprecision</span><span class = "operator">(</span><span class = "num">10</span><span class = "operator">)</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">fixed</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"exp(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">exp</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Exp</span><span class = "operator"><</span><span class = "ident">iter_exp</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Iteration(k = 2) of exp(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">exp</span><span class = "operator">(</span><span class = "ident">exp</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">))</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Casc_exp</span><span class = "operator"><</span><span class = "num">2</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"ln(3/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">log</span><span class = "operator">(</span><span class = "num">3</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Ln</span><span class = "operator"><</span><span class = "ident">iter_log</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">3</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Iteration(k = 2) of ln(3/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">log</span><span class = "operator">(</span><span class = "ident">log</span><span class = "operator">(</span><span class = "num">3</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">))</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Casc_ln</span><span class = "operator"><</span><span class = "num">2</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">3</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cos(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">cos</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Cos</span><span class = "operator"><</span><span class = "ident">iter_cos</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Iteration(k = 2) of ln(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">cos</span><span class = "operator">(</span><span class = "ident">cos</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">))</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Casc_cos</span><span class = "operator"><</span><span class = "num">2</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"sin(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">sin</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">)</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Sin</span><span class = "operator"><</span><span class = "ident">iter_sin</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Iteration(k = 2) of ln(1/2):"</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"cmath :    "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">sin</span><span class = "operator">(</span><span class = "ident">sin</span><span class = "operator">(</span><span class = "num">1</span><span class = "operator">./</span><span class = "num">2</span><span class = "operator">))</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"template : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Casc_sin</span><span class = "operator"><</span><span class = "num">2</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">1</span><span class = "operator">,</span><span class = "white"> </span><span class = "num">2</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"accurancy : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"iter_exp : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">iter_exp</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"iter_log : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">iter_log</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"iter_cos : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">iter_cos</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"iter_sin : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">iter_sin</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "directive">#endif // DEBUG</span><span class = "white">
+</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "directive">#ifndef DEBUG</span><span class = "white">
+</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">setprecision</span><span class = "operator">(</span><span class = "num">2</span><span class = "operator">)</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">fixed</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"For input data "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">n</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">" / "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">m</span><span class = "white">  </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">" : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">setprecision</span><span class = "operator">(</span><span class = "num">10</span><span class = "operator">)</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">fixed</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"   library :   "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">sin</span><span class = "operator">(</span><span class = "ident">sin</span><span class = "operator">(</span><span class = "ident">sin</span><span class = "operator">(</span><span class = "ident">sin</span><span class = "operator">(</span><span class = "ident">cos</span><span class = "operator">(</span><span class = "ident">cos</span><span class = "operator">(</span><span class = "ident">cos</span><span class = "operator">(</span><span class = "ident">log</span><span class = "operator">(</span><span class = "ident">log</span><span class = "operator">(</span><span class = "ident">exp</span><span class = "operator">(</span><span class = "ident">exp</span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">(</span><span class = "ident">n</span><span class = "operator">)/</span><span class = "reserved">double</span><span class = "operator">(</span><span class = "ident">m</span><span class = "operator">))))))))))))</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">fixed</span><span class = "delim">;</span><span class = "white">
+        </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"   templates : "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white">
+        </span><span class = "operator">(</span><span class = "reserved">double</span><span class = "operator">)</span><span class = "white"> </span><span class = "ident">Casc_sin</span><span class = "operator"><</span><span class = "ident">NS</span><span class = "operator">,</span><span class = "white">
+                            </span><span class = "ident">Casc_cos</span><span class = "operator"><</span><span class = "ident">NC</span><span class = "operator">,</span><span class = "white">
+                                        </span><span class = "ident">Casc_ln</span><span class = "operator"><</span><span class = "ident">NL</span><span class = "operator">,</span><span class = "white">
+                                                   </span><span class = "ident">Casc_exp</span><span class = "operator"><</span><span class = "ident">NE</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">n</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">m</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white">
+                                                   </span><span class = "operator">,</span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white">
+                                        </span><span class = "operator">,</span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white">
+                            </span><span class = "operator">,</span><span class = "ident">accuracy</span><span class = "operator">>::</span><span class = "ident">res</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">accuracy</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "directive">#endif // DEBUG</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">return</span><span class = "white"> </span><span class = "num">0</span><span class = "delim">;</span><span class = "white">
+</span><span class = "delim">}</span><span class = "white">
+</span></p></body>
 </html>
