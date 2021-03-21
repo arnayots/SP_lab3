@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 
+import static com.company.lexer.color.*;
+
 public class lexer {
 
     public lexer(String filename) throws IOException {
@@ -100,7 +102,7 @@ public class lexer {
         len = text.length();
         token = new color[len];
         for(int i = 0; i < len; i++)
-            token[i] = color.clear;
+            token[i] = clear;
 
         int i = 0;
         while(i < len){
@@ -110,7 +112,7 @@ public class lexer {
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
-                    token[j] = color.comment;
+                    token[j] = comment;
                 text_draft = to_white(text_draft, pos1, pos2);
                 i = pos2;
             } else
@@ -125,7 +127,7 @@ public class lexer {
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
-                    token[j] = color.comment;
+                    token[j] = comment;
                 text_draft = to_white(text_draft, pos1, pos2);
                 i = pos2;
             } else
@@ -140,7 +142,7 @@ public class lexer {
                 if(pos_before == -1 || is_blank_string(text_draft.substring(pos_before, pos1))){
                     int pos2 = text_draft.indexOf("\n");
                     for(int j = pos1; j < pos2; j++)
-                        token[j] = color.directive;
+                        token[j] = directive;
                     text_draft = to_white(text_draft, pos1, pos2);
                     i = pos2;
                 } else
@@ -179,9 +181,9 @@ public class lexer {
                 }
                 if(j < len && pos2 != -1){
                     if(ch == '"')
-                        text_draft = set_state(text_draft, pos1, pos2 + 1, color.string);
+                        text_draft = set_state(text_draft, pos1, pos2 + 1, string);
                     else
-                        text_draft = set_state(text_draft, pos1, pos2 + 1, color.charline);
+                        text_draft = set_state(text_draft, pos1, pos2 + 1, charline);
                     i = pos2 + 1;
                 }
             }
@@ -225,7 +227,7 @@ public class lexer {
 
         i = 0;
         while(i < len){
-            if(token[i] == color.clear && numbers.indexOf(text_draft.charAt(i)) != -1){
+            if(token[i] == clear && numbers.indexOf(text_draft.charAt(i)) != -1){
                 int pos1 = i;
                 if(pos1 != 0 && (text.charAt(pos1 -1) == '-'))
                     pos1--;
@@ -234,7 +236,7 @@ public class lexer {
                     pos2 = text_draft.indexOf(white, pos2);
                 if(pos2 == -1)
                     pos2 = len;
-                text_draft = set_state(text_draft, pos1, pos2, color.num);
+                text_draft = set_state(text_draft, pos1, pos2, num);
 
 
 
@@ -348,6 +350,128 @@ public class lexer {
     }
 
 */
+
+    public void create_html(String filename) throws IOException {
+        FileWriter writer = new FileWriter(filename);
+        writer.write("<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <title>");
+        writer.write(filename);
+        writer.write("</title>\n" +
+                "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
+                "<link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap\" rel=\"stylesheet\">\n" +
+                "    <style>\n" +
+                "   body {\n" +
+                "    font-family: \"Source Code Pro\", monospace;\n" +
+                "   }\n" +
+                "   .clear {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #500;\n" +
+                "   }\n" +
+                "   .white {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #050;\n" +
+                "   }\n" +
+                "   .comment {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #005;\n" +
+                "   }\n" +
+                "   .directive {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #a00;\n" +
+                "   }\n" +
+                "   .string {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #0a0;\n" +
+                "   }\n" +
+                "   .charline {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #00a;\n" +
+                "   }\n" +
+                "   .operator {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #550;\n" +
+                "   }\n" +
+                "   .delim {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #505;\n" +
+                "   }\n" +
+                "   .reserved {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #055;\n" +
+                "   }\n" +
+                "   .num {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #aa0;\n" +
+                "   }\n" +
+                "   .error {\n" +
+                "    background-color: #fff;\n" +
+                "    color: #a0a;\n" +
+                "   }\n" +
+                "  </style>\n" +
+                "</head>\n" +
+                "<body>\n");
+        writer.write("<p>");
+
+        int i = 0;
+        while(i < len){
+            int pos1 = i;
+            int pos2 = text.indexOf("\n", pos1);
+            if(pos2 == -1)
+                pos2 = len;
+            color etalon = token[pos1];
+            String tmp = String.valueOf(text.charAt(pos1));
+            for(int j = pos1 + 1; j < pos2; j++){
+                if(token[j] == etalon)
+                    tmp += text.charAt(j);
+                else {
+                    writer.write("<span class = \""+get_html_class(etalon)+"\">" +
+                            tmp + "</span>");
+                    etalon = token[j];
+                    tmp = String.valueOf(text.charAt(j));
+                }
+            }
+            writer.write("<span class = \""+get_html_class(etalon)+"\">" +
+                    tmp + "</span>");
+            writer.write("<br>\n");
+        }
+
+/*
+        writer.write("<span class = \"num\">LAMO1</span><span class = \"error\">lol2</span>");
+        writer.write("<br>");
+        writer.write("<span class = \"comment\">LAMO1</span><span class = \"string\">lol2</span>");
+*/
+
+        writer.write("</p>");
+        writer.write("</body>\n" +
+                "</html>");
+        writer.close();
+    }
+
+    private String get_html_class(color col){
+        switch(col){
+            case clear: return "clear";
+            case white: return "white";
+            case comment: return "comment";
+            case directive: return "directive";
+            case string: return "string";
+            case charline: return "charline";
+            case operator: return "operator";
+            case delim: return "delim";
+            case reserved: return "reserved";
+            case num: return "num";
+            case error: return "error";
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + col);
+        }
+    }
+
+
+
+
 
     //variables
 
