@@ -96,7 +96,7 @@ public class lexer {
         int c = fr.read();
         while (c != -1){
             text += (char)c;
-            text_draft += Character.toLowerCase(c);
+            text_draft += String.valueOf((char)Character.toLowerCase(c));
             c = fr.read();
         }
         len = text.length();
@@ -104,11 +104,13 @@ public class lexer {
         for(int i = 0; i < len; i++)
             token[i] = clear;
 
+        System.out.println("point 0");
+
         int i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("//", i);
             if(pos1 != -1){
-                int pos2 = text_draft.indexOf("\n");
+                int pos2 = text_draft.indexOf("\n", pos1);
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
@@ -118,12 +120,14 @@ public class lexer {
             } else
                 i = len;
         }
+
+        System.out.println("point 1");
 
         i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("/*", i);
             if(pos1 != -1){
-                int pos2 = text_draft.indexOf("*/");
+                int pos2 = text_draft.indexOf("*/", pos1);
                 if(pos2 == -1)
                     pos2 = len;
                 for(int j = pos1; j < pos2; j++)
@@ -134,6 +138,8 @@ public class lexer {
                 i = len;
         }
 
+        System.out.println("point 2");
+/*
         i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("#", i);
@@ -150,6 +156,8 @@ public class lexer {
             } else
                 i = len;
         }
+
+        System.out.println("point 3");
 
         i = 0;
         while(i < len){
@@ -189,6 +197,8 @@ public class lexer {
             }
         }
 
+        System.out.println("point 4");
+
         for(String word : operator){
             i = 0;
             while(i < len){
@@ -200,6 +210,8 @@ public class lexer {
                     i = len;
             }
         }
+
+        System.out.println("point 5");
 
         for(String word : delim){
             i = 0;
@@ -213,6 +225,8 @@ public class lexer {
             }
         }
 
+        System.out.println("point 6");
+
         for(String word : reserved){
             i = 0;
             while(i < len){
@@ -224,6 +238,8 @@ public class lexer {
                     i = len;
             }
         }
+
+        System.out.println("point 7");
 
         i = 0;
         while(i < len){
@@ -242,6 +258,8 @@ public class lexer {
 
             }
         }
+*/
+        System.out.println("point 8");
 
 
 
@@ -375,8 +393,8 @@ public class lexer {
                 "    color: #050;\n" +
                 "   }\n" +
                 "   .comment {\n" +
-                "    background-color: #fff;\n" +
-                "    color: #005;\n" +
+                "    background-color: #fef;\n" +
+                "    color: #0c0;\n" +
                 "   }\n" +
                 "   .directive {\n" +
                 "    background-color: #fff;\n" +
@@ -418,7 +436,7 @@ public class lexer {
         int i = 0;
         while(i < len){
             int pos1 = i;
-            int pos2 = text.indexOf("\n", pos1);
+            int pos2 = text.indexOf("\n", pos1 + 1);
             if(pos2 == -1)
                 pos2 = len;
             color etalon = token[pos1];
@@ -436,6 +454,7 @@ public class lexer {
             writer.write("<span class = \""+get_html_class(etalon)+"\">" +
                     tmp + "</span>");
             writer.write("<br>\n");
+            i = pos2;
         }
 
 /*
@@ -448,6 +467,7 @@ public class lexer {
         writer.write("</body>\n" +
                 "</html>");
         writer.close();
+        System.out.println("html printed");
     }
 
     private String get_html_class(color col){
