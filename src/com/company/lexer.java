@@ -169,32 +169,36 @@ public class lexer {
         while(i < len){
             int tmp1 = text_draft.indexOf("'", i);
             int tmp2 = text_draft.indexOf("\"", i);
-            int pos1;
+            int pos1 = -1;
             if(tmp1 != -1 && tmp2 != -1)
                 pos1 = Math.min(tmp1, tmp2);
-            if(tmp1 == -1 && tmp2 == -1)
-                i = len;
-            else {
-                if(tmp1 != -1)
-                    pos1 = tmp1;
-                else
-                    pos1 = tmp2;
+            else{
+                if(tmp1 == -1 && tmp2 == -1)
+                    i = len;
+                else {
+                    if(tmp1 != -1)
+                        pos1 = tmp1;
+                    else
+                        pos1 = tmp2;
+                }
+            }
+            if(pos1 != -1) {
                 char ch = text_draft.charAt(pos1);
                 int j = pos1 + 1;
                 boolean not_ok = true;
                 int pos2 = -1;
-                while(j < len && not_ok){
+                while (j < len && not_ok) {
                     pos2 = text_draft.indexOf(ch, j);
-                    if(pos2 != -1){
-                        if(text_draft.charAt(pos2 - 1) != '\\')
+                    if (pos2 != -1) {
+                        if (text_draft.charAt(pos2 - 1) != '\\')
                             not_ok = false;
                         else
                             j = pos2;
                     } else
                         j = len;
                 }
-                if(j < len && pos2 != -1){
-                    if(ch == '"')
+                if (j < len && pos2 != -1) {
+                    if (ch == '"')
                         text_draft = set_state(text_draft, pos1, pos2 + 1, string);
                     else
                         text_draft = set_state(text_draft, pos1, pos2 + 1, charline);
@@ -525,6 +529,21 @@ public class lexer {
                 "</head>\n" +
                 "<body>\n");
         writer.write("<p>");
+
+        writer.write("<span class =\"clear\">clear</span><br>");
+        writer.write("<span class =\"white\">white</span><br>");
+        writer.write("<span class =\"comment\">comment</span><br>");
+        writer.write("<span class =\"directive\">directive</span><br>");
+        writer.write("<span class =\"string\">string</span><br>");
+        writer.write("<span class =\"charline\">charline</span><br>");
+        writer.write("<span class =\"operator\">operator</span><br>");
+        writer.write("<span class =\"delim\">delim</span><br>");
+        writer.write("<span class =\"reserved\">reserved</span><br>");
+        writer.write("<span class =\"num\">num</span><br>");
+        writer.write("<span class =\"error\">error</span><br>");
+
+        writer.write("<br>");
+
 
         int i = 0;
         while(i < len){

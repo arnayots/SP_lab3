@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>index3.html</title>
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+   body {
+    font-family: "Source Code Pro", monospace;
+    white-space: pre;
+    font-weight: 500
+   }
+   p {
+    margin : 0
+   }
+   .clear {
+    background-color: #dff;
+    color: #500;
+   }
+   .white {
+    background-color: #fff;
+    color: #050;
+   }
+   .comment {
+    background-color: #efe;
+    color: #999;
+   }
+   .directive {
+    background-color: #fee;
+    color: #c00;
+   }
+   .string {
+    background-color: #eef;
+    color: #00f;
+   }
+   .charline {
+    background-color: #eef;
+    color: #00f;
+   }
+   .operator {
+    background-color: #fff;
+    color: #f30;
+   }
+   .delim {
+    background-color: #fff0f0;
+    color: #f00;
+   }
+   .reserved {
+    background-color: #fff;
+    color: #0000a0;
+   }
+   .num {
+    background-color: #fff;
+    color: #ff52f9;
+   }
+   .ident {
+    background-color: #fff;
+    color: #00a000;
+   }
+   .error {
+    background-color: #f00;
+    color: #fff;
+   }
+  </style>
+</head>
+<body>
+<p><span class ="clear">clear</span><br><span class ="white">white</span><br><span class ="comment">comment</span><br><span class ="directive">directive</span><br><span class ="string">string</span><br><span class ="charline">charline</span><br><span class ="operator">operator</span><br><span class ="delim">delim</span><br><span class ="reserved">reserved</span><br><span class ="num">num</span><br><span class ="error">error</span><br><br><span class = "directive">#include &ltiostream&gt</span><span class = "white">
+</span><span class = "reserved">using</span><span class = "white"> </span><span class = "reserved">namespace</span><span class = "white"> </span><span class = "ident">std</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+</span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">main</span><span class = "operator">()</span><span class = "white">
+</span><span class = "delim">{</span><span class = "white">    </span><span class = "white">
+    </span><span class = "reserved">int</span><span class = "white"> </span><span class = "ident">divisor</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">dividend</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">quotient</span><span class = "operator">,</span><span class = "white"> </span><span class = "ident">remainder</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Enter dividend: "</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "ident">cin</span><span class = "white"> </span><span class = "operator">>&gt</span><span class = "white"> </span><span class = "ident">dividend</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Enter divisor: "</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "ident">cin</span><span class = "white"> </span><span class = "operator">>&gt</span><span class = "white"> </span><span class = "ident">divisor</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "ident">quotient</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">dividend</span><span class = "white"> </span><span class = "operator">/</span><span class = "white"> </span><span class = "ident">divisor</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "ident">remainder</span><span class = "white"> </span><span class = "operator">=</span><span class = "white"> </span><span class = "ident">dividend</span><span class = "white"> </span><span class = "operator">%</span><span class = "white"> </span><span class = "ident">divisor</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Quotient = "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">quotient</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">endl</span><span class = "delim">;</span><span class = "white">
+    </span><span class = "ident">cout</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "string">"Remainder = "</span><span class = "white"> </span><span class = "operator"><&lt</span><span class = "white"> </span><span class = "ident">remainder</span><span class = "delim">;</span><span class = "white">
+</span><span class = "white">
+    </span><span class = "reserved">return</span><span class = "white"> </span><span class = "num">0</span><span class = "delim">;</span><span class = "white">
+</span><span class = "delim">}</span></p></body>
+</html>
