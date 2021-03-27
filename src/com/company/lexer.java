@@ -15,23 +15,10 @@ public class lexer {
         fr = new FileReader(file);
         reader = new BufferedReader(fr);
 
-        //white = new HashSet<>();
-        //az = new HashSet<>();
-        //az09 = new HashSet<>();
-        //az09_ = new HashSet<>();
-        //numbers = new HashSet<>();
         operator = new LinkedHashSet<>();
         reserved = new HashSet<>();
         delim = new HashSet<>();
 
-        /*
-        white.add(011);
-        white.add(012);
-        white.add(013);
-        white.add(014);
-        white.add(015);
-        white.add(040);
-*/
         delim.add(";");
         delim.add(",");
         delim.add("{");
@@ -70,30 +57,6 @@ public class lexer {
                 reserved.add(data.trim().toLowerCase(Locale.ROOT));
             data = reader1.readLine();
         }
-
-
-
-
-
-
-
-    }
-
-
-
-
-
-    private void do_step(char c){
-        if(state == 0){
-          //  if(white.contains(c))
-
-        }
-        if(state == 1){
-
-        }
-        if(state == 0){
-
-        }
     }
 
     public void analyse() throws IOException {
@@ -108,8 +71,7 @@ public class lexer {
         for(int i = 0; i < len; i++)
             token[i] = clear;
 
-        System.out.println("point 0");
-
+        //comment 1
         int i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("//", i);
@@ -117,16 +79,13 @@ public class lexer {
                 int pos2 = text_draft.indexOf("\n", pos1);
                 if(pos2 == -1)
                     pos2 = len;
-                for(int j = pos1; j < pos2; j++)
-                    token[j] = comment;
-                text_draft = to_white(text_draft, pos1, pos2);
+                set_state(text_draft, pos1, pos2, comment);
                 i = pos2;
             } else
                 i = len;
         }
 
-        System.out.println("point 1");
-
+        //comment 2
         i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("/*", i);
@@ -134,16 +93,13 @@ public class lexer {
                 int pos2 = text_draft.indexOf("*/", pos1) + 2;
                 if(pos2 == -1)
                     pos2 = len;
-                for(int j = pos1; j < pos2; j++)
-                    token[j] = comment;
-                text_draft = to_white(text_draft, pos1, pos2);
+                set_state(text_draft, pos1, pos2, comment);
                 i = pos2;
             } else
                 i = len;
         }
 
-        System.out.println("point 2");
-
+        //directives
         i = 0;
         while(i < len){
             int pos1 = text_draft.indexOf("#", i);
@@ -153,9 +109,7 @@ public class lexer {
                     int pos2 = text_draft.indexOf("\n", pos1);
                     if(pos2 == -1)
                         pos2 = len;
-                    for(int j = pos1; j < pos2; j++)
-                        token[j] = directive;
-                    text_draft = to_white(text_draft, pos1, pos2);
+                    set_state(text_draft, pos1, pos2, directive);
                     i = pos2;
                 } else
                     i = pos1 + 1;
@@ -163,8 +117,7 @@ public class lexer {
                 i = len;
         }
 
-        System.out.println("point 3");
-
+        //string and c-strings
         i = 0;
         while(i < len){
             int tmp1 = text_draft.indexOf("'", i);
@@ -207,8 +160,7 @@ public class lexer {
             }
         }
 
-        System.out.println("point 4");
-
+        //operators
         for(String word : operator){
             i = 0;
             while(i < len){
@@ -221,8 +173,7 @@ public class lexer {
             }
         }
 
-        System.out.println("point 5");
-
+        //delims
         for(String word : delim){
             i = 0;
             while(i < len){
@@ -235,8 +186,7 @@ public class lexer {
             }
         }
 
-        System.out.println("point 6");
-
+        //reserved
         for(String word : reserved){
             i = 0;
             while(i < len){
@@ -256,10 +206,7 @@ public class lexer {
             }
         }
 
-        System.out.println("point 7");
-
-
-
+        //identificators
         i = 0;
         while(i < len){
             if(az.indexOf(text_draft.charAt(i)) != -1 && token[i] == color.clear){
@@ -278,6 +225,7 @@ public class lexer {
                 i++;
         }
 
+        //numbers
         i = 0;
         while(i < len){
             if(numeric.indexOf(text_draft.charAt(i)) != -1 && token[i] == color.clear){
@@ -286,13 +234,8 @@ public class lexer {
                     while(j < len && token[i] == color.clear && white.indexOf(text_draft.charAt(j)) == -1)
                         j++;
                     int pos2 = j;
-                    if(j == len)
-                        pos2 = len;
-                    if(is_norm_num(text_draft.substring(i, pos2))){
-
-                    }
-
-
+                    //if(j == len)
+                    //    pos2 = len;
                     text_draft = set_state(text_draft, i, pos2, color.num);
                     i = pos2;
                 } else
@@ -301,36 +244,17 @@ public class lexer {
                 i++;
         }
 
+        //whites
         for(i = 0; i < len; i++){
             if(token[i] == clear && white.indexOf(text_draft.charAt(i)) != -1)
                 token[i] = color.white;
         }
+
+        //errors
         for(i = 0; i < len; i++){
             if(token[i] == clear)
                 token[i] = color.error;
         }
-
-
-        /*
-        i = 0;
-        while(i < len){
-            if(token[i] == clear && numbers.indexOf(text_draft.charAt(i)) != -1){
-                int pos1 = i;
-                if(pos1 != 0 && (text.charAt(pos1 -1) == '-'))
-                    pos1--;
-                int pos2 = text_draft.indexOf(white, i);
-                if(pos2 != -1 && text_draft.charAt(pos2 - 1) == 'e')
-                    pos2 = text_draft.indexOf(white, pos2);
-                if(pos2 == -1)
-                    pos2 = len;
-                text_draft = set_state(text_draft, pos1, pos2, num);
-            }
-        }
-        */
-        System.out.println("point 8");
-
-
-
     }
 
     private String set_state(String str, int pos1, int pos2, color st){
@@ -353,109 +277,9 @@ public class lexer {
         return str.substring(0, i) + tmp + str.substring(j);
     }
 
-
-
-
-/*
-    public void analyse() throws IOException {
-        String line;
-        line_num = 1;
-        line = reader.readLine();
-        while(line != null){
-            if(state == 0){
-                if(is_directive_line(line)){
-                    ArrayList<String> tmp1 = new ArrayList<>();
-                    tmp1.add(line);
-                    out_str.add(tmp1);
-                    ArrayList<token> tmp2 = new ArrayList<>();
-                    tmp2.add(token.directive);
-                    color.add(tmp2);
-                } else {
-                    cur_line = new ArrayList<>();
-                    cur_color = new ArrayList<>();
-                    process_line(line, 0);
-                }
-            }
-            if(state == 1){
-                System.out.println("-------------------------------");
-            }
-            line = reader.readLine();
-            line_num++;
-        }
-    }
-
-
- */
-
-
-    private boolean is_norm_num(String st){
-        return true;
-        /*
-        String str = st;
-        int n = str.length();
-        if(str.equals("-"))
-            return false;
-        if(str.charAt(0) == '-')
-            st = st.substring(1);
-        if(n == 1 && str.charAt(0) >= '0' && str.charAt(0) <= '9')
-            return true;
-        if(str.charAt(0) < 0 || str.charAt(0) > 9)
-            return false;
-        if(str.charAt(0) != 0){
-            int dot_counter = 0;
-            int i = 0;
-            while(i < n){
-
-            }
-        }*/
-    }
-
-    private boolean is_directive_line(String line) throws IOException {
-        int first_hashtag = line.indexOf("#");
-        if (first_hashtag != -1){
-            String tmp = line.substring(0, first_hashtag);
-            if(is_blank_string(tmp)){
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean is_blank_string(String string) {
         return string == null || string.trim().isEmpty();
     }
-
-    /*
-    private void process_line(String line, int from){
-        process_line(line, from, line.length());
-    }
-
-    private void process_line(String line, int from, int to){
-        if(from >= to)
-            return;
-        if(is_blank_string(line.substring(from, to))){
-            cur_line.add(line.substring(from, to));
-            cur_color.add(token.clear);
-        } else {
-            int pos = line.indexOf("");
-            if(pos != -1){
-                process_line(line, from, pos);
-                cur_line.add("");
-                cur_color.add(token.error);
-                process_line(line, pos + 2, to);
-            } else {
-                pos = line.indexOf("//");
-                if(pos != -1){
-                    process_line(line, from, pos);
-                    cur_line.add("");
-                    cur_color.add(token.error);
-                    process_line(line, pos + 2, to);
-                }
-            }
-        }
-    }
-
-*/
 
     public void create_html(String filename) throws IOException {
         FileWriter writer = new FileWriter(filename);
@@ -464,7 +288,7 @@ public class lexer {
                 "<head>\n" +
                 "    <meta charset=\"utf-8\">\n" +
                 "    <title>");
-        writer.write(filename);
+        writer.write(fname);
         writer.write("</title>\n" +
                 "<link rel=\"preconnect\" href=\"https://fonts.gstatic.com\">\n" +
                 "<link href=\"https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap\" rel=\"stylesheet\">\n" +
@@ -576,12 +400,6 @@ public class lexer {
             i = pos2 + 1;
         }
 
-/*
-        writer.write("<span class = \"num\">LAMO1</span><span class = \"error\">lol2</span>");
-        writer.write("<br>");
-        writer.write("<span class = \"comment\">LAMO1</span><span class = \"string\">lol2</span>");
-*/
-
         writer.write("</p>");
         writer.write("</body>\n" +
                 "</html>");
@@ -590,23 +408,21 @@ public class lexer {
     }
 
     private String get_html_class(color col){
-        switch(col){
-            case clear: return "clear";
-            case white: return "white";
-            case comment: return "comment";
-            case directive: return "directive";
-            case string: return "string";
-            case charline: return "charline";
-            case operator: return "operator";
-            case delim: return "delim";
-            case reserved: return "reserved";
-            case num: return "num";
-            case ident: return "ident";
-            case error: return "error";
-
-            default:
-                throw new IllegalStateException("Unexpected value: " + col);
-        }
+        return switch (col) {
+            case clear -> "clear";
+            case white -> "white";
+            case comment -> "comment";
+            case directive -> "directive";
+            case string -> "string";
+            case charline -> "charline";
+            case operator -> "operator";
+            case delim -> "delim";
+            case reserved -> "reserved";
+            case num -> "num";
+            case ident -> "ident";
+            case error -> "error";
+            default -> throw new IllegalStateException("Unexpected value: " + col);
+        };
     }
 
 
@@ -618,24 +434,6 @@ public class lexer {
     String fname;
     FileReader fr;
     BufferedReader reader;
-    int line_num = 0;
-
-    int state = 0;
-
-    //0 - start of line
-    //1 - white char
-
-    //HashSet<String> directives;
-    //static String directibes_file = "directives.txt";
-
-    /*
-    ArrayList<String> cur_line;
-    ArrayList<token> cur_color;
-
-
-    ArrayList<ArrayList<String>> out_str;
-    ArrayList<ArrayList<token>> color;
-    */
 
     enum color {
         clear,
@@ -662,7 +460,6 @@ public class lexer {
     String az09_ = "";
     String numeric = "";
     //HashSet<Integer> numbers;
-    String numbers = "0123456789";
     LinkedHashSet<String> operator;
     HashSet<String> reserved;
     HashSet<String> delim;

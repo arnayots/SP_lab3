@@ -12,6 +12,7 @@ public class Main {
             //lexer a = new lexer("D:\\DATA\\Program 2 Labs\\Modul1\\Stoian.cpp");
 
             a.analyse();
+
             //a.create_html("index2.html");
             a.create_html("index3.html");
         }
